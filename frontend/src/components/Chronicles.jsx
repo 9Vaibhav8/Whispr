@@ -20,7 +20,7 @@ const DiaryChronicles = () => {
 const fetchDiaryEntries = async () => {
   try {
     setLoading(true);
-    const { data } = await axios.get('http://localhost:5000/api/diary', {
+    const { data } = await axios.get('https://whispr-backend-cgh7.onrender.com/api/diary', {
       withCredentials: true,
     });
     setEntries(data); // Assume backend returns full image URLs (e.g., Cloudinary links)
@@ -45,7 +45,7 @@ const fetchDiaryEntries = async () => {
 
   const handleDelete = async (id) => {
   try {
-    await axios.delete(`http://localhost:5000/api/diary/${id}`, {
+    await axios.delete(`https://whispr-backend-cgh7.onrender.com/api/diary/${id}`, {
       withCredentials: true,
     });
     setEntries(entries.filter(entry => entry._id !== id));
@@ -89,7 +89,7 @@ const fetchDiaryEntries = async () => {
   const handleUpdate = async (id) => {
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/diary/${id}`,
+        `https://whispr-backend-cgh7.onrender.com/api/diary/${id}`,
         editForm,
         { withCredentials: true }
       );
