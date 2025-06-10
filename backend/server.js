@@ -17,7 +17,7 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:5173", // Dev frontend (Vite default port)
-  "https://whispr-backend-cgh7.onrender.com" // Replace with your actual frontend URL
+  "https://whispr-frontend-u1do.onrender.com" // Replace with your actual frontend URL
 ];
 app.use(cors({
   origin: (origin, callback) => {
