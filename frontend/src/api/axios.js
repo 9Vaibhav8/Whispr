@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: 'http://localhost:5000', // Your backend port
+  baseURL: 'https://whispr-backend-cgh7.onrender.com', // Your backend port
   withCredentials: true, // optional if using cookies/sessions
 });
 
