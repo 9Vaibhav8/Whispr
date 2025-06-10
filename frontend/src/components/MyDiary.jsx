@@ -139,7 +139,7 @@ const openBook = () => {
       const formData = new FormData();
       formData.append('image', file);
       
-      const response = await axios.post('http://localhost:5000/api/upload', formData, {
+      const response = await axios.post('https://whispr-backend-cgh7.onrender.com/api/upload', formData, {
         withCredentials: true,
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -218,7 +218,7 @@ const openBook = () => {
     try {
       // If image was already uploaded to server, you might want to delete it there too
       if (imageToDelete.publicId) {
-        await axios.delete(`http://localhost:5000/api/images/${imageToDelete.publicId}`, {
+        await axios.delete(`https://whispr-backend-cgh7.onrender.com/api/images/${imageToDelete.publicId}`, {
           withCredentials: true
         });
       }
@@ -266,7 +266,7 @@ const openBook = () => {
     }
 
     // 2. Create diary entry with all images
-    const response = await axios.post('http://localhost:5000/api/diary', {
+    const response = await axios.post('https://whispr-backend-cgh7.onrender.com/api/diary', {
       title: entry.title,
       content: entry.content,
       mood: entry.mood,
