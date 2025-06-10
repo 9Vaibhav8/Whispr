@@ -1,0 +1,24 @@
+import axios from 'axios';
+
+const instance = axios.create({
+  baseURL: 'http://localhost:5000', // Your backend port
+  withCredentials: true, // optional if using cookies/sessions
+});
+
+
+const token = localStorage.getItem('token');
+if (token) {
+  instance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+}
+
+export const askAI = async (prompt) => {
+  try {
+    const response = await instance.post('/api/chat', { prompt });
+    return response.data.reply;
+  } catch (error) {
+    console.error("AI Request Failed:", error);
+    throw error;
+  }
+};
+
+export default instance;

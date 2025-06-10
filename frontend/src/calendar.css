@@ -1,0 +1,333 @@
+/* calendar.css - Updated with notebook styling */
+
+/* Base calendar customization */
+.custom-calendar {
+  width: 100%;
+  font-family: 'Georgia', serif;
+  border: none !important;
+  background: transparent !important;
+  margin-bottom: 1rem;
+}
+
+/* Make calendar look like a notebook page */
+.react-calendar {
+  background-color: #fffbeb !important;
+  border-radius: 2px !important;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.15) !important;
+  padding: 1rem;
+  border: none !important;
+  position: relative;
+  margin-left: 35px;
+  background-image: 
+    linear-gradient(#f0e6d2 1px, transparent 1px),
+    linear-gradient(90deg, #e4d5b7 1px, transparent 1px);
+  background-size: 100% 28px, 100% 28px;
+  background-position: 0 -1px;
+}
+
+/* Notebook binding */
+.calendar-container {
+  position: relative;
+}
+
+.calendar-container::before {
+  content: '';
+  position: absolute;
+  left: -25px;
+  top: 0;
+  bottom: 0;
+  width: 25px;
+  background: #d4a76a;
+  border-right: 2px solid #b38b57;
+  border-radius: 3px 0 0 3px;
+  box-shadow: inset -7px 0 9px -7px rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+.calendar-container::after {
+  content: '';
+  position: absolute;
+  left: -25px;
+  top: 0;
+  bottom: 0;
+  width: 25px;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 15px,
+    rgba(255, 255, 255, 0.2) 15px,
+    rgba(255, 255, 255, 0.2) 20px
+  );
+  z-index: 2;
+}
+
+/* Hide the default navigation */
+.react-calendar__navigation {
+  margin-bottom: 1em;
+}
+
+/* Style the days of the week */
+.react-calendar__month-view__weekdays {
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 0.85em;
+  color: #92400e;
+  padding-bottom: 0.5rem;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+  padding: 0.5rem;
+}
+
+.react-calendar__month-view__weekdays__weekday abbr {
+  text-decoration: none;
+}
+
+/* Style individual days */
+.react-calendar__tile {
+  padding: 1em 0.5em;
+  position: relative;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+/* Today's date */
+.react-calendar__tile--now {
+  background-color: #fef3c7 !important;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+/* Selected date */
+.react-calendar__tile--active {
+  background-color: #f59e0b25 !important;
+  color: #92400e;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+/* Hover effect */
+.react-calendar__tile:hover {
+  background-color: #fef3c7 !important;
+  border-radius: 8px;
+}
+
+/* Weekend days */
+.react-calendar__month-view__days__day--weekend {
+  color: #92400e;
+}
+
+/* Inactive month days */
+.react-calendar__month-view__days__day--neighboringMonth {
+  color: #ccc;
+}
+
+/* Navigation buttons */
+.react-calendar__navigation button:enabled:hover,
+.react-calendar__navigation button:enabled:focus {
+  background-color: #fef3c7;
+  border-radius: 8px;
+}
+
+/* Entry date indicators */
+.entry-date {
+  position: relative;
+}
+
+.entry-date::after {
+  content: '';
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* For more visual impact, add a hover effect to the indicators */
+.entry-date:hover::after {
+  width: 12px;
+  height: 12px;
+  transition: all 0.2s ease;
+}
+
+/* Mood indicators */
+.happy-mood::after { background-color: #FFD166; }
+.excited-mood::after { background-color: #FF9F1C; }
+.calm-mood::after { background-color: #A0C4FF; }
+.sad-mood::after { background-color: #6B95C2; }
+.angry-mood::after { background-color: #FF6B6B; }
+.anxious-mood::after { background-color: #9381FF; }
+.hopeful-mood::after { background-color: #9CE37D; }
+.neutral-mood::after { background-color: #B5BAC1; }
+
+/* Custom calendar header */
+.calendar-custom-header {
+  margin-bottom: 0.5rem;
+}
+
+.calendar-custom-header h3 {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-style: italic;
+  color: #8B4513;
+}
+
+/* Animation for month change */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.react-calendar__viewContainer {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Diary entry paper styling */
+.diary-entry-paper {
+  background-color: #fffbeb;
+  background-image: linear-gradient(#f0e6d2 1px, transparent 1px);
+  background-size: 100% 28px;
+  position: relative;
+}
+
+.diary-entry-paper::before {
+  content: '';
+  position: absolute;
+  left: 3rem;
+  top: 0;
+  height: 100%;
+  width: 1px;
+  background-color: #d4a76a;
+  z-index: 0;
+}
+
+/* Timeline entry styling */
+.timeline-entry {
+  display: flex;
+  padding: 0.5rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: 1px solid #f0e6d2;
+}
+
+.timeline-entry:hover {
+  background-color: rgba(255, 255, 255, 0.8);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.timeline-date {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 1rem;
+  flex-shrink: 0;
+  color: #000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.timeline-content {
+  flex-grow: 1;
+}
+
+/* Typography for notebook style */
+.handwritten-text {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.font-handwriting {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-style: italic;
+}
+
+.handwritten-note {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-style: italic;
+  font-size: 1.2rem;
+  color: #8B4513;
+}
+
+/* Background */
+.bg-grey {
+  background-color: #fffbeb;
+}
+
+/* Text colors */
+.text-t {
+  color: #8B4513;
+}
+
+/* For entry display */
+.notebook-section {
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.emotion-tag {
+  padding: 0.2rem 0.6rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  text-transform: capitalize;
+}
+
+/* Updated legends section */
+.mood-legend {
+  background-color: rgba(255, 255, 255, 0.6);
+  border: 1px solid #f0e6d2;
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+.mood-legend h4 {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-style: italic;
+  color: #8B4513;
+  margin-bottom: 0.5rem;
+}
+
+/* Month selector styling */
+.month-selector {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  margin-bottom: 1rem;
+}
+
+.month-selector h3 {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-style: italic;
+  font-size: 1.5rem;
+  color: #8B4513;
+  margin: 0;
+}
+
+.month-selector button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: #8B4513;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.month-selector button:hover {
+  background-color: rgba(139, 69, 19, 0.1);
+}
