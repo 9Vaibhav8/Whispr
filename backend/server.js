@@ -14,6 +14,11 @@ dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
 
 const app = express();
+
+const allowedOrigins = [
+  "http://localhost:5173", // Dev frontend (Vite default port)
+  "https://whispr-backend-cgh7.onrender.com" // Replace with your actual frontend URL
+];
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || origin.startsWith("http://localhost:")) {
