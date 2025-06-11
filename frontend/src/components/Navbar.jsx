@@ -13,10 +13,17 @@ const Nav = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    await logout();
+ const handleLogout = async () => {
+  try {
+    await logout(); // this sends request to /logout
+    setAuth({ user: null, isAuthenticated: false }); // reset context state
     setShowMenu(false);
-  };
+    navigate("/login"); // optional: send them to login page
+  } catch (err) {
+    console.error("Logout failed", err);
+  }
+};
+
 
   const handleClickOutside = (event) => {
     if (menuRef.current && !menuRef.current.contains(event.target)) {
