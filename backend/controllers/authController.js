@@ -83,7 +83,7 @@ export const logoutUser = (req, res) => {
       maxAge: 0, // Expired immediately
       httpOnly: true, // Prevent XSS attacks
       sameSite: "None", // CSRF protection
-      secure: process.env.NODE_ENV !== "development", // Secure cookies in production
+      secure:  true, // Secure cookies in production
     });
 
     res.json({ message: "Logout successful" });
