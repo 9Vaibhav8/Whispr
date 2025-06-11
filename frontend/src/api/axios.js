@@ -6,11 +6,6 @@ const instance = axios.create({
 });
 
 
-const token = localStorage.getItem('token');
-if (token) {
-  instance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-}
-
 export const askAI = async (prompt) => {
   try {
     const response = await instance.post('/api/chat', { prompt });
