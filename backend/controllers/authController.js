@@ -51,6 +51,7 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ 
         mobileError: "Set header: Content-Type: application/json" 
       });
+  }
       
     const { email, password } = req.body;
 
