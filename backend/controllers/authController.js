@@ -46,6 +46,12 @@ export const registerUser = async (req, res) => {
 
 export const loginUser = async (req, res) => {
   try {
+
+    if (!req.headers['content-type']?.includes('application/json')) {
+      return res.status(400).json({ 
+        mobileError: "Set header: Content-Type: application/json" 
+      });
+      
     const { email, password } = req.body;
 
     // Find the user by email
@@ -68,6 +74,7 @@ export const loginUser = async (req, res) => {
       message: 'Login successful',
       userId: user._id,
       username: user.username,
+      mobileReady: true,
     });
 
   } catch (err) {
