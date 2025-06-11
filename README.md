@@ -16,7 +16,8 @@ Whispr is a modern, mood-aware digital diary app built with the MERN stack. It a
  🛠 Tech Stack
 - Frontend: React.js, Tailwind CSS, Recharts
 - Backend: Node.js, Express.js
-- Database: MongoDB and Cloudinary 
+- Database: MongoDB
+- Image Storage - CLoudinary
 - Authentication: JWT, Cookies
 - AI Integration: GeminiAI API (chatbot + smart insights)
 - Deployment: Render
