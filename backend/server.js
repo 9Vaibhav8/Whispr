@@ -19,24 +19,18 @@ const allowedOrigins = [
    // Dev frontend (Vite default port)
   "https://whispr-frontend-u1do.onrender.com" // Replace with your actual frontend URL
 ];
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || origin.startsWith(origin)) {
-      callback(null, true); 
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,}))
-
-
-app.use((req, res, next) => {
-  if (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH') {
-    express.json()(req, res, next);
+origin: function (origin, callback) {
+  if (!origin || allowedOrigins.includes(origin)) {
+    callback(null, true);
   } else {
-    next();
+    callback(new Error("Not allowed by CORS"));
   }
-});
+}
+
+
+app.use(express.json());
+
+
 app.use(cookieParser());
 app.use('/api/diary',  diaryRoutes);
 app.use('/api/auth', authRoutes);
