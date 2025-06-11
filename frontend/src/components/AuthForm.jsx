@@ -32,7 +32,7 @@ const AuthForm = ({ isLoginPage, toggleAuthMode }) => {
           email: formData.email,
           password: formData.password
         });
-        window.location.reload();
+      navigate('/');
       } else {
         await signup({
           username: formData.username,
@@ -43,7 +43,7 @@ const AuthForm = ({ isLoginPage, toggleAuthMode }) => {
         // Reload after signup
         if (!storeError) {
           navigate('/');
-          setTimeout(() => window.location.reload(), 100); // Give time for route to change
+          // Give time for route to change
         }
         
       }
