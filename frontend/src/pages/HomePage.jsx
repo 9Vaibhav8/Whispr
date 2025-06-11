@@ -238,7 +238,7 @@ const Homepage = () => {
             </div>
           </div>
           <div>
-            <h4 className="font-semibold text-gray-900">AKshat</h4>
+            <h4 className="font-semibold text-gray-900">Akshat</h4>
             <p className="text-sm text-gray-500">Daily writer</p>
           </div>
         </div>
