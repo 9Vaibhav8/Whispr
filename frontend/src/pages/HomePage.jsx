@@ -238,8 +238,8 @@ const Homepage = () => {
             </div>
           </div>
           <div>
-            <h4 className="font-semibold text-gray-900">Alex Smith</h4>
-            <p className="text-sm text-gray-500">Daily writer, 2 years</p>
+            <h4 className="font-semibold text-gray-900">AKshat</h4>
+            <p className="text-sm text-gray-500">Daily writer</p>
           </div>
         </div>
       </div>
@@ -267,7 +267,7 @@ const Homepage = () => {
             </div>
           </div>
           <div>
-            <h4 className="font-semibold text-gray-900">Jamie Diaz</h4>
+            <h4 className="font-semibold text-gray-900">Vansh</h4>
             <p className="text-sm text-gray-500">Creative writer</p>
           </div>
         </div>
