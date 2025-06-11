@@ -1,7 +1,7 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from './Navbar';
 import axios from 'axios';
-import { BookOpen, Calendar, FileText, AlertCircle, Sparkles, Trash2, Edit, X, Save, ArrowLeft, ChevronRight } from 'lucide-react';
+import { BookOpen, Calendar, FileText, AlertCircle, Sparkles, Trash2, Edit, X, Save, ArrowLeft, ChevronRight, ZoomIn, ChevronLeft, ChevronRight as ChevronRightIcon } from 'lucide-react';
 
 const DiaryChronicles = () => {
   const [entries, setEntries] = useState([]); 
@@ -12,25 +12,40 @@ const DiaryChronicles = () => {
   const [successMessage, setSuccessMessage] = useState(null);
   const [currentView, setCurrentView] = useState('cover'); 
   const [selectedEntryId, setSelectedEntryId] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     fetchDiaryEntries();
   }, []);
 
-const fetchDiaryEntries = async () => {
-  try {
-    setLoading(true);
-    const { data } = await axios.get('https://whispr-backend-cgh7.onrender.com/api/diary', {
-      withCredentials: true,
-    });
-    setEntries(data); // Assume backend returns full image URLs (e.g., Cloudinary links)
-    setError(null);
-  } catch (err) {
-    setError(err.response?.data?.error || 'Failed to fetch entries');
-  } finally {
-    setLoading(false);
-  }
-};
+  useEffect(() => {
+    if (isImageModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isImageModalOpen]);
+
+  const fetchDiaryEntries = async () => {
+    try {
+      setLoading(true);
+      const { data } = await axios.get('http://localhost:5000/api/diary', {
+        withCredentials: true,
+      });
+      setEntries(data);
+      setError(null);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to fetch entries');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const formatDate = (dateString) => {
     if (!dateString) return 'Unknown date';
@@ -44,26 +59,22 @@ const fetchDiaryEntries = async () => {
   };
 
   const handleDelete = async (id) => {
-  try {
-    await axios.delete(`https://whispr-backend-cgh7.onrender.com/api/diary/${id}`, {
-      withCredentials: true,
-    });
-    setEntries(entries.filter(entry => entry._id !== id));
-    setSuccessMessage('Diary deleted successfully');
-    setTimeout(() => setSuccessMessage(null), 3000);
-    
-    // Route back to contents view after deletion
-    setCurrentView('contents');
-    setSelectedEntryId(null);
-    
-    // Reset any editing states
-    setEditingId(null);
-    setEditForm({ title: '', content: '' });
-  } catch (err) {
-    console.error("Delete error:", err);
-    setError('Error deleting diary');
-  }
-};
+    try {
+      await axios.delete(`http://localhost:5000/api/diary/${id}`, {
+        withCredentials: true,
+      });
+      setEntries(entries.filter(entry => entry._id !== id));
+      setSuccessMessage('Diary deleted successfully');
+      setTimeout(() => setSuccessMessage(null), 3000);
+      setCurrentView('contents');
+      setSelectedEntryId(null);
+      setEditingId(null);
+      setEditForm({ title: '', content: '' });
+    } catch (err) {
+      console.error("Delete error:", err);
+      setError('Error deleting diary');
+    }
+  };
 
   const startEditing = (entry) => {
     setEditingId(entry._id);
@@ -89,7 +100,7 @@ const fetchDiaryEntries = async () => {
   const handleUpdate = async (id) => {
     try {
       const response = await axios.put(
-        `https://whispr-backend-cgh7.onrender.com/api/diary/${id}`,
+        `http://localhost:5000/api/diary/${id}`,
         editForm,
         { withCredentials: true }
       );
@@ -102,7 +113,7 @@ const fetchDiaryEntries = async () => {
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
       console.error("Update error:", err);
-      setError('Error updating diary ');
+      setError('Error updating diary');
     }
   };
 
@@ -114,23 +125,105 @@ const fetchDiaryEntries = async () => {
     setSelectedEntryId(entryId);
     setCurrentView('entry');
   };
+
   const goBack = () => {
-  // Clear messages when navigating
-  setSuccessMessage(null);
-  setError(null);
-  
-  if (currentView === 'entry') {
-    setCurrentView('contents');
-    setSelectedEntryId(null);
-  } else if (currentView === 'contents') {
-    setCurrentView('cover');
-  }
-  
-  // Reset any editing states when going back
-  setEditingId(null);
-  setEditForm({ title: '', content: '' });
-};
-   
+    setSuccessMessage(null);
+    setError(null);
+    
+    if (currentView === 'entry') {
+      setCurrentView('contents');
+      setSelectedEntryId(null);
+    } else if (currentView === 'contents') {
+      setCurrentView('cover');
+    }
+    
+    setEditingId(null);
+    setEditForm({ title: '', content: '' });
+  };
+
+  const handleImageClick = (image, index, entry) => {
+    setSelectedImage(image);
+    setCurrentImageIndex(index);
+    setIsImageModalOpen(true);
+  };
+
+  const navigateImages = (direction) => {
+    const currentEntry = entries.find(entry => entry._id === selectedEntryId);
+    if (!currentEntry || !currentEntry.images) return;
+
+    let newIndex;
+    if (direction === 'next') {
+      newIndex = (currentImageIndex + 1) % currentEntry.images.length;
+    } else {
+      newIndex = (currentImageIndex - 1 + currentEntry.images.length) % currentEntry.images.length;
+    }
+    
+    setCurrentImageIndex(newIndex);
+    setSelectedImage(currentEntry.images[newIndex]);
+  };
+
+  const ImageModal = () => {
+    if (!isImageModalOpen || !selectedImage) return null;
+
+    const currentEntry = entries.find(entry => entry._id === selectedEntryId);
+    const totalImages = currentEntry?.images?.length || 0;
+
+    return (
+      <div 
+        className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+        onClick={() => setIsImageModalOpen(false)}
+      >
+        <div 
+          className="relative max-w-4xl w-full max-h-[90vh]"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button 
+            onClick={() => setIsImageModalOpen(false)}
+            className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors"
+          >
+            <X size={32} />
+          </button>
+          
+          <div className="relative h-full">
+            <img 
+              src={selectedImage.url} 
+              alt="Enlarged memory" 
+              className="w-full h-full max-h-[80vh] object-contain rounded-lg"
+            />
+            
+            {totalImages > 1 && (
+              <>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigateImages('prev');
+                  }}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full shadow-lg transition-all"
+                >
+                  <ChevronLeft size={24} />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigateImages('next');
+                  }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full shadow-lg transition-all"
+                >
+                  <ChevronRightIcon size={24} />
+                </button>
+              </>
+            )}
+          </div>
+          
+          {totalImages > 1 && (
+            <div className="mt-2 text-center text-white text-sm">
+              {currentImageIndex + 1} of {totalImages}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
 
   if (loading) {
     return (
@@ -147,8 +240,8 @@ const fetchDiaryEntries = async () => {
       </div>
     );
   }
- 
-if (currentView === 'cover') {
+
+ if (currentView === 'cover') {
   return (
    
     
@@ -340,7 +433,7 @@ if (currentView === 'cover') {
   );
 }
 
-if (currentView === 'contents') {
+  if (currentView === 'contents') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 relative overflow-hidden">
         {/* Animated stars background */}
@@ -372,48 +465,22 @@ if (currentView === 'contents') {
                 before:absolute before:inset-0 before:bg-gradient-to-r before:from-purple-500/10 before:via-transparent before:to-cyan-500/10 before:animate-pulse
                 after:absolute after:inset-0 after:bg-[radial-gradient(circle_at_30%_20%,rgba(120,119,198,0.1),transparent)] after:pointer-events-none">
               
-              {/* Nebula texture overlay */}
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.1)_0%,transparent_50%)] opacity-60"></div>
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_80%_20%,rgba(59,130,246,0.1)_0%,transparent_50%)] opacity-40"></div>
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_80%,rgba(236,72,153,0.1)_0%,transparent_50%)] opacity-50"></div>
-              
-              {/* Cosmic corner effect */}
-              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-400/20 via-cyan-400/20 to-transparent transform rotate-45 translate-x-10 -translate-y-10 rounded-full blur-sm"></div>
-              
-              {/* Glowing orbs */}
-              <div className="absolute top-8 left-6 w-2 h-2 bg-purple-400 rounded-full shadow-lg shadow-purple-400/50 animate-pulse"></div>
-              <div className="absolute top-12 left-8 w-1.5 h-1.5 bg-cyan-400 rounded-full shadow-lg shadow-cyan-400/50 animate-pulse delay-500"></div>
-              
               {/* Cosmic title */}
               <div className="text-center mb-8 relative z-20">
-                <div className="absolute left-1/4 right-1/4 bottom-2 h-px bg-gradient-to-r from-transparent via-purple-400/50 to-transparent"></div>
                 <h1 className="text-5xl font-bold bg-gradient-to-r from-white via-purple-200 to-cyan-200 bg-clip-text text-transparent mb-2 relative inline-block drop-shadow-2xl tracking-tight">
-                  <span className="relative z-10 px-4 font-sans bg-gradient-to-b from-white/90 to-purple-100/90 bg-clip-text text-transparent filter drop-shadow-lg" 
-                        style={{textShadow: '0 0 20px rgba(139, 92, 246, 0.5), 0 0 40px rgba(139, 92, 246, 0.3)'}}>
-                    Contents
-                  </span>
+                  Contents
                 </h1>
-                <div className="w-32 h-px bg-gradient-to-r from-transparent via-purple-400 to-transparent mx-auto mt-4 animate-pulse"></div>
-                {/* Cosmic sparkles around title */}
-                <div className="absolute -top-2 left-1/3 w-1 h-1 bg-white rounded-full animate-ping"></div>
-                <div className="absolute -top-1 right-1/3 w-0.5 h-0.5 bg-cyan-300 rounded-full animate-ping delay-300"></div>
               </div>
               
               {Array.isArray(entries) && entries.length > 0 ? (
                 <div className="space-y-3 relative z-20">
-                  {/* Cosmic margin lines */}
-                  <div className="absolute left-12 top-0 bottom-0 w-px bg-gradient-to-b from-purple-400/30 via-cyan-400/30 to-purple-400/30"></div>
-                  <div className="absolute left-10 top-0 bottom-0 w-0.5 bg-gradient-to-b from-pink-400/40 to-purple-400/40"></div>
-                  
                   {entries.map((entry, index) => (
                     <div
                       key={entry._id}
                       className="flex items-center justify-between p-5 hover:bg-gradient-to-r hover:from-purple-800/40 hover:to-cyan-800/40 cursor-pointer transition-all duration-300 group relative
-                        border-b border-purple-500/20 last:border-b-0 rounded-lg hover:shadow-xl hover:shadow-purple-500/20 backdrop-blur-sm z-10
-                        before:absolute before:inset-0 before:bg-gradient-to-r before:from-white/5 before:to-transparent before:opacity-0 before:hover:opacity-100 before:transition-opacity before:duration-300 before:rounded-lg"
+                        border-b border-purple-500/20 last:border-b-0 rounded-lg hover:shadow-xl hover:shadow-purple-500/20 backdrop-blur-sm z-10"
                       onClick={() => openEntry(entry._id)}
                     >
-                      {/* Cosmic entry number */}
                       <span className="text-sm mr-4 font-bold w-8 text-right bg-gradient-to-b from-white/90 to-purple-200/90 bg-clip-text text-transparent font-sans relative z-10"
                             style={{textShadow: '0 0 10px rgba(139, 92, 246, 0.5)'}}>
                         {String(index + 1).padStart(2, '0')}
@@ -429,72 +496,27 @@ if (currentView === 'contents') {
                         </p>
                       </div>
                       
-                      {/* Cosmic orb decoration */}
-                      <div className="absolute left-10 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-gradient-to-r from-purple-400 to-cyan-400 opacity-60 group-hover:opacity-100 group-hover:shadow-xl group-hover:shadow-purple-400/50 transition-all duration-300 z-10"></div>
-                      
                       <ChevronRight className="w-5 h-5 text-purple-300/80 group-hover:text-cyan-200/90 transform group-hover:translate-x-1 transition-all duration-300 ml-4 drop-shadow-lg relative z-10" />
-                      
-                      {/* Glossy overlay effect */}
-                      <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"></div>
                     </div>
                   ))}
                 </div>
               ) : (
                 <div className="text-center py-12 relative z-20">
-                  <div className="absolute inset-0 flex items-center justify-center opacity-5">
-                    <svg width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-purple-300">
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                      <polyline points="14 2 14 8 20 8"></polyline>
-                      <line x1="16" y1="13" x2="8" y2="13"></line>
-                      <line x1="16" y1="17" x2="8" y2="17"></line>
-                      <polyline points="10 9 9 9 8 9"></polyline>
-                    </svg>
-                  </div>
                   <FileText className="w-12 h-12 text-purple-300 mx-auto mb-6 relative z-10 drop-shadow-2xl" />
-                  <p className=" relative z-10 font-sans mb-8 text-lg font-medium tracking-wide bg-gradient-to-b from-white/95 to-purple-100/95 bg-clip-text text-transparent"
+                  <p className="relative z-10 font-sans mb-8 text-lg font-medium tracking-wide bg-gradient-to-b from-white/95 to-purple-100/95 bg-clip-text text-transparent"
                      style={{textShadow: '0 0 20px rgba(139, 92, 246, 0.4)'}}>
                     No entries yet. Start writing your cosmic story!
                   </p>
-                  <button className="px-8 py-4 bg-gradient-to-b from-purple-500 via-purple-600 to-purple-700 text-white rounded-xl hover:from-purple-400 hover:via-purple-500 hover:to-purple-600 transition-all duration-300 relative z-10 
-                      border border-purple-400/50 font-sans font-semibold text-lg shadow-2xl hover:shadow-purple-500/40 transform hover:scale-105 hover:translate-y-[-2px]
-                      before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/20 before:to-transparent before:rounded-xl before:opacity-50"
-                      style={{textShadow: '0 2px 4px rgba(0,0,0,0.3)'}}>
-                    <span className="flex items-center relative z-10">
-                      Create New Entry
-                      <div className="ml-3 w-1.5 h-1.5 bg-white rounded-full animate-pulse shadow-lg"></div>
-                    </span>
-                  </button>
                 </div>
               )}
-              
-              {/* Cosmic page number */}
-              <div className="absolute bottom-6 right-6 text-xs font-serif bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
-                {Math.floor(Math.random() * 10) + 1}
-              </div>
-              
-              {/* Nebula effect in corner */}
-              <div className="absolute bottom-12 left-12 w-20 h-20 rounded-full bg-gradient-to-r from-purple-500/10 to-cyan-500/10 blur-xl animate-pulse"></div>
-              
-              {/* Floating cosmic particles */}
-              <div className="absolute top-1/4 right-1/4 w-1 h-1 bg-white rounded-full animate-bounce delay-1000"></div>
-              <div className="absolute bottom-1/3 left-1/3 w-0.5 h-0.5 bg-cyan-300 rounded-full animate-bounce delay-700"></div>
             </div>
           </div>
-        </div>
-        
-        {/* Additional cosmic background elements */}
-        <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
-          <div className="absolute top-1/6 left-1/6 w-32 h-32 bg-purple-500/5 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-1/4 right-1/6 w-40 h-40 bg-cyan-500/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          <div className="absolute top-1/2 left-1/12 w-20 h-20 bg-pink-500/5 rounded-full blur-2xl animate-pulse delay-500"></div>
         </div>
       </div>
     );
   }
 
-
-  
-if (currentView === 'entry') {
+  if (currentView === 'entry') {
     const entry = entries.find(e => e._id === selectedEntryId);
     if (!entry) return null;
 
@@ -514,7 +536,7 @@ if (currentView === 'entry') {
         
         <div className="container mx-auto px-4 py-20">
           <div className="max-w-4xl mx-auto">
-            {/* Back button with page flip effect */}
+            {/* Back button */}
             <button
               onClick={goBack}
               className="mb-6 flex items-center text-gray-600 hover:text-gray-800 transition-all transform hover:translate-x-1"
@@ -617,19 +639,13 @@ if (currentView === 'entry') {
                               >
                                 <Edit className="w-5 h-5" />
                               </button>
-                             
                               <button 
-  onClick={() => {
-   {
-      handleDelete(entry._id);
-    }
-  }}
-  className="p-1 text-white/80 hover:text-white transition-colors"
-  title="Delete"
->
-  <Trash2 className="w-5 h-5" />
-</button>
-                              
+                                onClick={() => handleDelete(entry._id)}
+                                className="p-1 text-white/80 hover:text-white transition-colors"
+                                title="Delete"
+                              >
+                                <Trash2 className="w-5 h-5" />
+                              </button>
                             </>
                           )}
                         </div>
@@ -653,52 +669,50 @@ if (currentView === 'entry') {
                           {entry.content || 'No content available'}
                         </p>
                       </div>
-                    ) }
+                    )}
 
                     {entry.images?.length > 0 && (
-                                  <div className="mt-6">
-                                    <h3 className="text-sm font-medium text-gray-500 mb-3">MEMORIES</h3>
-                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                      {entry.images.map((image) => (
-                                        <div key={image._id} className="relative group aspect-square overflow-hidden rounded-lg shadow-md">
-                                          <img
-                                            src={image.url}
-                                            alt="Diary memory"
-                                            className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                                          />
-                                         
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                )}
+                      <div className="mt-6">
+                        <h3 className="text-sm font-medium text-gray-500 mb-3">MEMORIES</h3>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                          {entry.images.map((image, index) => (
+                            <div key={image._id} className="relative group aspect-square overflow-hidden rounded-lg shadow-md">
+                              <img
+                                src={image.url}
+                                alt="Diary memory"
+                                className="w-full h-full object-cover cursor-pointer transition-all duration-300 group-hover:scale-110"
+                                onClick={() => handleImageClick(image, index, entry)}
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
+                                <div className="flex gap-3">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleImageClick(image, index, entry);
+                                    }}
+                                    className="p-3 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all transform hover:scale-110"
+                                  >
+                                    <ZoomIn size={18} />
+                                  </button>
+                                </div>
                               </div>
-                    
-
-
-                  
-                    <div className="mt-8 pt-6 border-t border-gray-100">
-                      <div className="flex items-center justify-between text-sm text-gray-500">
-                        <div className="flex items-center">
-                          
-                          
-                        </div>
-                        <div className="flex space-x-2">
-                          <div className="w-1 h-1 bg-purple-300 rounded-full"></div>
-                          <div className="w-1 h-1 bg-pink-300 rounded-full"></div>
-                          <div className="w-1 h-1 bg-blue-300 rounded-full"></div>
+                            </div>
+                          ))}
                         </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
-                 
+              </div>
               
               {/* 3D Shadow Effect */}
               <div className="absolute inset-0 bg-black/20 blur-md rounded-xl -z-10 translate-y-4 group-hover:translate-y-6 transition-transform duration-500"></div>
             </div>
           </div>
         </div>
+
+        {/* Image Modal */}
+        <ImageModal />
 
         {/* Background Decorations */}
         <div className="fixed top-20 right-10 w-32 h-32 bg-purple-200 rounded-full opacity-20 animate-pulse"></div>
