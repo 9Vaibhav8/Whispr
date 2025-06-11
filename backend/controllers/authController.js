@@ -93,7 +93,7 @@ export const logoutUser = (req, res) => {
   }
 };
 
-export const checkAuth = (req, res) => {
+export const checkAuth = async (req, res) => {
   try {
     if (req.user) {
         const user = await User.findById(req.user.id).select("username email");
