@@ -21,10 +21,15 @@ const allowedOrigins = [
 
 const corsOptions = {
   origin: "https://whispr-frontend-u1do.onrender.com",
-  credentials: true, 
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // ← Mobile needs OPTIONS
+  exposedHeaders: ['Set-Cookie'] 
 };
-
 app.use(cors(corsOptions));
+
+// Add this AFTER CORS middleware:
+app.options('*', cors(corsOptions)); 
 
 
 
