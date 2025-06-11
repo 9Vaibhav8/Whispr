@@ -18,7 +18,7 @@ const Nav = () => {
     await logout(); // this sends request to /logout
     setAuth({ user: null, isAuthenticated: false }); // reset context state
     setShowMenu(false);
-    navigate("/login"); // optional: send them to login page
+    navigate("/"); // optional: send them to login page
   } catch (err) {
     console.error("Logout failed", err);
   }
