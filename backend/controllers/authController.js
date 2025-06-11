@@ -96,6 +96,7 @@ export const logoutUser = (req, res) => {
 export const checkAuth = (req, res) => {
   try {
     if (req.user) {
+        const user = await User.findById(req.user.id).select("username email");
       // If the user is authenticated, send user data
       return res.json({
         message: 'User authenticated',
