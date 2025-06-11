@@ -82,7 +82,7 @@ export const logoutUser = (req, res) => {
     res.cookie("jwt", "", {
       maxAge: 0, // Expired immediately
       httpOnly: true, // Prevent XSS attacks
-      sameSite: "strict", // CSRF protection
+      sameSite: "None", // CSRF protection
       secure: process.env.NODE_ENV !== "development", // Secure cookies in production
     });
 
