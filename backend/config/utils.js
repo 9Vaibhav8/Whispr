@@ -9,7 +9,7 @@ export const generateToken = (userId, res) => {
     maxAge: 7 * 24 * 60 * 60 * 1000, // MS
     httpOnly: true, // prevent XSS attacks
     sameSite: "None", // CSRF protection
-    secure: process.env.NODE_ENV !== "development", // Secure cookies in production
+    secure: true", // Secure cookies in production
   });
 
   return token;
