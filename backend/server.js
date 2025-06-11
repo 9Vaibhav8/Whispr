@@ -16,7 +16,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const app = express();
 
 const allowedOrigins = [
-  "http://localhost:5173", // Dev frontend (Vite default port)
+   // Dev frontend (Vite default port)
   "https://whispr-frontend-u1do.onrender.com" // Replace with your actual frontend URL
 ];
 app.use(cors({
