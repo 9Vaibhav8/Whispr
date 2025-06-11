@@ -37,9 +37,21 @@ app.use(express.json());
 
 
 app.use(cookieParser());
+app.use((req, res, next) => {
+  res.header('Access-Control-Expose-Headers', 'Set-Cookie'); // ← Critical
+  next();
+});
 app.use('/api/diary',  diaryRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/upload', router);
+// Add error handling middleware (after routes):
+app.use((err, req, res, next) => {
+  console.error(`MOBILE_ERROR: ${err.stack}`);
+  res.status(500).json({ 
+    error: 'Mobile operation failed',
+    hint: 'Check cookies and CORS' 
+  });
+});
 
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
