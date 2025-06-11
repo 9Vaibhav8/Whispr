@@ -16,16 +16,22 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const app = express();
 
 const allowedOrigins = [
-   // Dev frontend (Vite default port)
-  "https://whispr-frontend-u1do.onrender.com" // Replace with your actual frontend URL
+  "https://whispr-frontend-u1do.onrender.com"
 ];
-origin: function (origin, callback) {
-  if (!origin || allowedOrigins.includes(origin)) {
-    callback(null, true);
-  } else {
-    callback(new Error("Not allowed by CORS"));
-  }
-}
+
+const corsOptions = {
+  origin:  (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true, 
+};
+
+app.use(cors(corsOptions));
+
 
 
 app.use(express.json());
