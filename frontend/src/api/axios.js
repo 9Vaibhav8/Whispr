@@ -2,7 +2,11 @@ import axios from 'axios';
 
 const instance = axios.create({
   baseURL: 'https://whispr-backend-cgh7.onrender.com', // Your backend port
-  withCredentials: true, // optional if using cookies/sessions
+  withCredentials: true,
+    headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  }// optional if using cookies/sessions
 });
 
 
