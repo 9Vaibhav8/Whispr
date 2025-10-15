@@ -15,10 +15,10 @@ const Nav = () => {
 
  const handleLogout = async () => {
   try {
-    await logout(); // this sends request to /logout
-    setAuth({ user: null, isAuthenticated: false }); // reset context state
+    await logout();
+    setAuth({ user: null, isAuthenticated: false }); 
     setShowMenu(false);
-    navigate("/"); // optional: send them to login page
+    navigate("/"); 
   } catch (err) {
     console.error("Logout failed", err);
   }
@@ -43,7 +43,7 @@ const Nav = () => {
     navigate('/auth');
   };
 
-  // Handle scroll effect
+  
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -80,18 +80,18 @@ const Nav = () => {
     </Link>
   );
 
-  // Auth Modal Component
+  
   const AuthModal = () => (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4">
       <div className="fixed inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setShowAuthModal(false)}></div>
       <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl p-8 w-full max-w-md border border-white/20 animate-fade-in">
         <div className="text-center space-y-6">
-          {/* Gradient lock icon */}
+          
           <div className="mx-auto w-16 h-16 rounded-2xl flex items-center justify-center bg-gradient-to-br from-violet-500 to-indigo-600 shadow-lg shadow-violet-500/25">
             <Lock className="w-7 h-7 text-white" />
           </div>
           
-          {/* Typography */}
+          
           <div className="space-y-2">
             <h3 className="text-2xl font-bold text-slate-900 tracking-tight">
               Join whispr
@@ -217,7 +217,7 @@ const Nav = () => {
         </div>
       </header>
 
-      {/* Auth Modal */}
+      
       {showAuthModal && <AuthModal />}
 
       <style>{`
